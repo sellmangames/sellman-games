@@ -566,7 +566,6 @@
   </div>
 </header>
 
-<!-- mobile drawer -->
 <div class="drawer" id="drawer">
   <div class="inner">
     <a href="#" id="mNavGames"><i class="fas fa-gamepad"></i> <span data-i18n="nav_games">Games</span></a>
@@ -576,7 +575,6 @@
   </div>
 </div>
 
-<!-- mobile search -->
 <div class="msearch" id="mSearchPanel">
   <div class="search">
     <i class="fas fa-search" style="color:var(--g)"></i>
@@ -607,8 +605,7 @@
 
 <div class="wrap" id="gamesSection">
   <div class="grid" id="grid">
-    <!-- games render -->
-  </div>
+    </div>
 
   <aside class="side">
     <h2><i class="fas fa-trophy"></i> <span data-i18n="top_players">Top Players (Weekly)</span></h2>
@@ -651,7 +648,6 @@
   </div>
 </footer>
 
-<!-- ===== Auth Modal ===== -->
 <div class="ov" id="ovAuth">
   <div class="modal" style="width:min(560px,100%)">
     <div class="mhead">
@@ -660,12 +656,6 @@
     </div>
 
     <div class="mbody">
-      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px">
-        <button class="btn1" id="googleBtn" style="flex:1"><i class="fa-brands fa-google"></i> <span data-i18n="google_signin">Continue with Google</span></button>
-      </div>
-
-      <div style="height:1px;background:rgba(255,255,255,.06); margin:10px 0 16px"></div>
-
       <div class="field">
         <label data-i18n="email">Email</label>
         <input id="email" type="email" placeholder="you@gmail.com"/>
@@ -689,7 +679,6 @@
   </div>
 </div>
 
-<!-- ===== Upload Modal (Admin) ===== -->
 <div class="ov" id="ovUpload">
   <div class="modal">
     <div class="mhead">
@@ -772,7 +761,6 @@
   </div>
 </div>
 
-<!-- ===== Profile Modal ===== -->
 <div class="ov" id="ovProfile">
   <div class="modal">
     <div class="mhead">
@@ -839,7 +827,6 @@
   </div>
 </div>
 
-<!-- ===== Language Modal ===== -->
 <div class="ov" id="ovLang">
   <div class="modal" style="width:min(520px,100%)">
     <div class="mhead">
@@ -875,8 +862,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 
   import {
-    getAuth, onAuthStateChanged, GoogleAuthProvider,
-    signInWithPopup, signOut,
+    getAuth, onAuthStateChanged, signOut,
     createUserWithEmailAndPassword, signInWithEmailAndPassword,
     sendPasswordResetEmail
   } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
@@ -894,7 +880,6 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
   const storage = getStorage(app);
-  const provider = new GoogleAuthProvider();
 
   /* ================= HELPERS ================= */
   const $ = (s)=>document.querySelector(s);
@@ -945,7 +930,6 @@
       about:"About", contact:"Contact", privacy:"Privacy", terms:"Terms",
       account:"Account", edit_profile:"Edit profile", upload_game:"Upload Game", logout:"Logout",
       auth_title:"Login / Register",
-      google_signin:"Continue with Google",
       email:"Email", password:"Password",
       login:"Login", register:"Register", forgot:"Forgot password",
       msg_email_needed:"ჩაწერე Email.",
@@ -999,7 +983,6 @@
       about:"About", contact:"Contact", privacy:"Privacy", terms:"Terms",
       account:"Account", edit_profile:"Edit profile", upload_game:"Upload Game", logout:"Logout",
       auth_title:"Login / Register",
-      google_signin:"Continue with Google",
       email:"Email", password:"Password",
       login:"Login", register:"Register", forgot:"Forgot password",
       msg_email_needed:"Enter email.",
@@ -1053,7 +1036,6 @@
       about:"О нас", contact:"Контакт", privacy:"Приватность", terms:"Условия",
       account:"Аккаунт", edit_profile:"Редактировать профиль", upload_game:"Загрузить игру", logout:"Выйти",
       auth_title:"Вход / Регистрация",
-      google_signin:"Войти через Google",
       email:"Email", password:"Пароль",
       login:"Войти", register:"Зарегистрироваться", forgot:"Забыли пароль",
       msg_email_needed:"Введите email.",
@@ -1260,7 +1242,6 @@
   const authMsg=$("#authMsg");
   const openAuthBtn=$("#openAuthBtn");
   const authClose=$("#authClose");
-  const googleBtn=$("#googleBtn");
   const emailEl=$("#email");
   const passEl=$("#pass");
   const emailLogin=$("#emailLogin");
@@ -1271,22 +1252,13 @@
   authClose.addEventListener("click",()=>ovAuth.classList.remove("open"));
   ovAuth.addEventListener("click",(e)=>{ if(e.target===ovAuth) ovAuth.classList.remove("open"); });
 
-  googleBtn.addEventListener("click",async ()=>{
-    try{
-      await signInWithPopup(auth, provider);
-      authMsg.textContent=t("msg_login_ok");
-      setTimeout(()=>ovAuth.classList.remove("open"),350);
-    }catch(e){
-      authMsg.textContent=(e?.message||t("msg_err"));
-    }
-  });
-
   emailLogin.addEventListener("click",async ()=>{
     try{
       await signInWithEmailAndPassword(auth, emailEl.value.trim(), passEl.value);
       authMsg.textContent=t("msg_login_ok");
       setTimeout(()=>ovAuth.classList.remove("open"),350);
     }catch(e){
+      console.error("Email Login Error:", e);
       authMsg.textContent=(e?.message||t("msg_err"));
     }
   });
@@ -1297,6 +1269,7 @@
       authMsg.textContent=t("msg_register_ok");
       setTimeout(()=>ovAuth.classList.remove("open"),350);
     }catch(e){
+      console.error("Email Register Error:", e);
       authMsg.textContent=(e?.message||t("msg_err"));
     }
   });
@@ -1308,6 +1281,7 @@
       await sendPasswordResetEmail(auth, em);
       authMsg.textContent=t("msg_reset_sent");
     }catch(e){
+      console.error("Forgot Password Error:", e);
       authMsg.textContent=(e?.message||t("msg_err"));
     }
   });
@@ -1746,7 +1720,7 @@
     allGames=list;
     renderFromState();
   },(err)=>{
-    console.error(err);
+    console.error("Firestore Snapshot Error:", err);
     grid.innerHTML = `
       <div class="drop" style="grid-column:1/-1; border-color:rgba(255,107,107,.35)">
         <strong style="color:var(--danger)"><i class="fas fa-triangle-exclamation"></i> Firestore error</strong>
@@ -1770,47 +1744,6 @@
   $("#yr").textContent = new Date().getFullYear();
   applyI18n();
 
-  /* ================== SECURITY RULES (copy to Firebase) =================
-    Firestore Rules:
-    rules_version = '2';
-    service cloud.firestore {
-      match /databases/{database}/documents {
-
-        // Games: everyone reads, only Admin writes
-        match /games/{docId} {
-          allow read: if true;
-          allow write: if request.auth != null
-                      && request.auth.token.email == "lukazakradze9@gmail.com";
-        }
-
-        // Users: read optional; each user writes own profile
-        match /users/{uid} {
-          allow read: if true;
-          allow write: if request.auth != null && request.auth.uid == uid;
-        }
-      }
-    }
-
-    Storage Rules:
-    rules_version = '2';
-    service firebase.storage {
-      match /b/{bucket}/o {
-
-        // Game files: everyone read, only Admin write
-        match /games/{allPaths=**} {
-          allow read: if true;
-          allow write: if request.auth != null
-                      && request.auth.token.email == "lukazakradze9@gmail.com";
-        }
-
-        // User banners: read optional; each user writes own folder
-        match /users/{uid}/{allPaths=**} {
-          allow read: if true;
-          allow write: if request.auth != null && request.auth.uid == uid;
-        }
-      }
-    }
-  ======================================================================= */
 </script>
 
 </body>
