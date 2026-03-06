@@ -7,15 +7,8 @@
 
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
-
-  <script>
-  const firebaseConfig = {
-    databaseURL: "https://შენი-პროექტის-ID.firebaseio.com"
-  };
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-</script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <style>
     :root{
       --neon:#00f2fe;
@@ -1847,6 +1840,7 @@ document.getElementById('backBtn')?.addEventListener('click', () => {
 
 </body>
 </html>
+
 
 
 
